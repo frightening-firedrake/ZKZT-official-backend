@@ -1,0 +1,242 @@
+<template>
+  <div class="app-container">
+    <span>产品分类：</span>
+    <el-select v-model="currentProductCategory" size="small" placeholder="请选择产品分类" style="width: 150px" @change="currentProductCategoryChange">
+      <el-option
+        v-for="item in productCategoryList"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id"
+      />
+    </el-select>
+    <span style="margin-left: 15px">主题分类：</span>
+    <el-select v-model="currentThemeCategory" size="small" placeholder="请选择主题分类" style="width: 150px" @change="currentThemeCategoryChange">
+      <el-option
+        v-for="item in themeCategoryList"
+        :key="item.id"
+        :label="item.name"
+        :value="item.id"
+      />
+    </el-select>
+    <div class="titles">资料名称：<el-input v-model="name" size="small" placeholder="请输入资料名称" style="width: 250px" /></div>
+    <h3 class="titles">资料缩略图：</h3>
+    <div class="thumbnail">
+      <div><img :src="FastDFSAccessUrl + thumbnailUrl" :alt="thumbnailName" class="image"></div>
+      <div class="btn">
+        <el-upload
+          :action="FastDFSUploadUrl + 'common/file/upload?remark=thumbnail'"
+          :show-file-list="false"
+          :multiple="false"
+          :limit="1"
+          :before-upload="beforeUpload"
+          :on-success="onSuccess"
+          :on-error="onError"
+        >
+          <el-button size="small" type="primary">重新上传缩略图</el-button>
+        </el-upload>
+      </div>
+    </div>
+
+    <h3 class="titles">附件信息：提示上传前直接编辑好文件名称</h3>
+    <div class="thumbnail">
+      <div>
+        <p v-text="downloadName" />
+        <a :href="FastDFSUploadUrl+'common/file/download?url=' +downloadUrl" :download="downloadName" v-text="'下载链接'+downloadUrl" />
+      </div>
+      <div class="btn">
+        <el-upload
+          :action="FastDFSUploadUrl + 'common/file/upload?remark=download'"
+          :show-file-list="false"
+          :multiple="false"
+          :limit="1"
+          :before-upload="beforeUpload"
+          :on-success="onSuccess2"
+          :on-error="onError"
+        >
+          <el-button size="small" type="primary">重新上传附件</el-button>
+        </el-upload>
+      </div>
+    </div>
+    <h3 class="titles">文章详情与编辑</h3>
+    <div>
+      <div>
+        <tinymce v-model="content" :height="300" />
+      </div>
+      <p class="titles">以下为网站宽度830px预览效果</p>
+      <el-switch
+        v-model="showContent"
+        style="display: inline-block"
+        active-color="#13ce66"
+        inactive-color="#ff4949"
+        active-text="显示预览"
+        inactive-text="关闭预览"
+      />
+      <div v-show="showContent" style="width:830px;margin:15px auto;border:1px solid rgba(0,0,0,0.3);" v-html="content" />
+      <div class="btnsWrap">
+        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-button @click="cancel">取消</el-button>
+      </div>
+    </div>
+  </div>
+
+</template>
+
+<script>
+import { GetDocumentDetail, GetDocumentById, GetAllProductCategory, GetAllThemeCategory, UpdateDocument } from '@/api/Document'
+import { FastDFSAccessUrl, FastDFSUploadUrl } from '@/utils/global'
+import Tinymce from '@/components/Tinymce'
+
+export default {
+  name: 'DocumentDetail',
+  components: { Tinymce },
+  data() {
+    return {
+      id: this.$route.params.id,
+      document: {},
+      documentDetail: {},
+      productCategoryList: [],
+      themeCategoryList: [],
+      currentProductCategory: null,
+      currentThemeCategory: null,
+      name: '',
+      oldThumbnailId: '',
+      newThumbnailId: '',
+      thumbnailName: '',
+      thumbnailUrl: '',
+      thumbnailId: null,
+
+      oldDetailFileId: '',
+      newDetailFileId: '',
+      downloadUrl: '',
+      downloadName: '',
+      downloadId: null,
+
+      FastDFSAccessUrl,
+      FastDFSUploadUrl,
+      documentContentId: '',
+      content: ``,
+      showContent: true
+    }
+  },
+  mounted() {
+    this.getDocumentDetail()
+    this.getDocumentById()
+    this.getAllProductCategory()
+    this.getAllThemeCategory()
+  },
+  methods: {
+    getDocumentDetail() {
+      GetDocumentDetail(this.id).then((res) => {
+        if (res) {
+          this.documentDetail = res
+          this.oldDetailFileId = res.files[0].id
+          this.downloadUrl = res.files[0].url
+          this.downloadName = res.files[0].name
+          this.documentContentId = res.documentContent.id
+          this.content = res.documentContent.content
+        }
+      })
+    },
+    getDocumentById() {
+      GetDocumentById(this.id).then((res) => {
+        if (res) {
+          this.document = res
+          this.currentProductCategory = res.productCategory.id
+          this.currentThemeCategory = res.themeCategory.id
+          this.name = res.name
+          this.oldThumbnailId = res.files[0].id
+          this.thumbnailUrl = res.files[0].url
+          this.thumbnailName = res.files[0].name
+        }
+      })
+    },
+    getAllProductCategory() {
+      GetAllProductCategory().then((res) => {
+        if (res) {
+          this.productCategoryList = res
+        }
+      })
+    },
+    getAllThemeCategory() {
+      GetAllThemeCategory().then((res) => {
+        if (res) {
+          this.themeCategoryList = res
+        }
+      })
+    },
+    currentProductCategoryChange(val) {
+      this.currentProductCategory = val
+      this.getDocument()
+    },
+    currentThemeCategoryChange(val) {
+      this.currentThemeCategory = val
+      this.getDocument()
+    },
+    beforeUpload(file) {
+      console.log('---beforeUpload---', file)
+    },
+    onSuccess(response, file, fileList) {
+      console.log('---onSuccess---', response, file, fileList)
+      this.thumbnailId = response.object.id
+      this.thumbnailName = response.object.name
+      this.thumbnailUrl = response.object.url
+    },
+    onSuccess2(response, file, fileList) {
+      console.log('---onSuccess---', response, file, fileList)
+      this.downloadId = response.object.id
+      this.downloadName = response.object.name
+      this.downloadUrl = response.object.url
+    },
+    onError(err, file, fileList) {
+      console.log('---onError---', err, file, fileList)
+    },
+    cancel() {
+      this.$router.back()
+    },
+    onSubmit() {
+      var data = {}
+      data.documentContentContent = this.content // 资料详情
+      data.documentContentId = this.documentContentId // 资料详情ID
+      data.documentId = this.id // 资料ID
+      data.documentName = this.name // 资料名称
+      data.newDetailFileId = this.downloadId || this.oldDetailFileId // 修改之后的详情文件ID
+      data.newThumbnailId = this.thumbnailId || this.oldThumbnailId // 修改之后的缩略图ID
+      data.oldDetailFileId = this.oldDetailFileId // 修改之前的详情文件ID
+      data.oldThumbnailId = this.oldThumbnailId // 修改之前的缩略图ID
+      data.productCategoryId = this.currentProductCategory // 产品分类ID
+      data.themeCategoryId = this.currentThemeCategory // 主题分类ID
+      UpdateDocument(data).then((res) => {
+        console.log(res)
+        if (res) {
+
+        }
+      })
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.thumbnail {
+  display: flex;
+  flex-direction: row;
+
+  .image {
+    width: 300px;
+    height: 187px;
+  }
+
+  .btn {
+    display: flex;
+    align-items: flex-end;
+  }
+}
+  .btnsWrap{
+    text-align: center;
+    margin:15px auto;
+  }
+  .titles{
+    margin-top:15px;
+    margin-bottom:15px;
+  }
+</style>
