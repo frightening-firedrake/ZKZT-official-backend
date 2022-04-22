@@ -1,25 +1,10 @@
 <template>
   <div class="app-container">
-    <span>产品分类：</span>
-    <el-select v-model="currentProductCategory" size="small" placeholder="请选择产品分类" style="width: 150px" @change="currentProductCategoryChange">
-      <el-option
-        v-for="item in productCategoryList"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
-    <span style="margin-left: 15px">主题分类：</span>
-    <el-select v-model="currentThemeCategory" size="small" placeholder="请选择主题分类" style="width: 150px" @change="currentThemeCategoryChange">
-      <el-option
-        v-for="item in themeCategoryList"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id"
-      />
-    </el-select>
-    <div class="titles">资料名称：<el-input v-model="name" size="small" placeholder="请输入资料名称" style="width: 250px" /></div>
-    <h3 class="titles">资料缩略图：</h3>
+    <h1>{{ modular.name }}<small>{{ modular.label }}</small></h1>
+
+    <div class="titles">流程名称：<el-input v-model="name" size="small" placeholder="请输入产品名称" style="width: 250px" /></div>
+    <div class="titles">流程标签：<el-input v-model="processLabel" size="small" placeholder="请输入产品名称" style="width: 250px" /></div>
+    <!-- <h3 class="titles">产品缩略图：</h3>
     <div class="thumbnail">
       <div><img :src="FastDFSAccessUrl + thumbnailUrl" :alt="thumbnailName" class="image"></div>
       <div class="btn">
@@ -35,8 +20,11 @@
           <el-button size="small" type="primary">重新上传缩略图</el-button>
         </el-upload>
       </div>
+    </div> -->
+    <div>
+      <h3>流程内容</h3>
+      <textarea v-model="processContent" cols="30" rows="10" />
     </div>
-
     <h3 class="titles">附件信息：提示上传前直接编辑好文件名称</h3>
     <div class="thumbnail">
       <div>
@@ -82,26 +70,27 @@
 </template>
 
 <script>
-import { GetAllProductCategory, GetAllThemeCategory, CreateDocument } from '@/api/Document'
+import { CreateProduct } from '@/api/Product'
 import { FastDFSAccessUrl, FastDFSUploadUrl } from '@/utils/global'
 import Tinymce from '@/components/Tinymce'
 
 export default {
-  name: 'DocumentDetail',
+  name: 'ProductDetail',
   components: { Tinymce },
   data() {
     return {
-      id: this.$route.params.id,
-      document: {},
-      documentDetail: {},
-      productCategoryList: [],
-      themeCategoryList: [],
-      currentProductCategory: null,
-      currentThemeCategory: null,
+      id: this.$route.query.id,
+      modular: {
+        label: this.$route.query.label,
+        name: this.$route.query.name
+      },
+
       name: '',
-      thumbnailName: '',
-      thumbnailUrl: '',
-      thumbnailId: null,
+      processLabel: '可定制',
+      processContent: '',
+      // thumbnailName: '',
+      // thumbnailUrl: '',
+      // thumbnailId: null,
 
       downloadUrl: '',
       downloadName: '',
@@ -109,47 +98,24 @@ export default {
 
       FastDFSAccessUrl,
       FastDFSUploadUrl,
-      documentContentId: '',
+      productContentId: '',
       content: ``,
       showContent: true,
       errorMsg: {
-        documentContentContent: '请输入文章详情',
-        documentName: '请输入资料名称',
         detailFileId: '请上传附件',
-        thumbnailId: '请上传缩略图',
-        productCategoryId: '请选择产品分类',
-        themeCategoryId: '请选择主题分类'
+        processContent: '请输入流程内容',
+        processContentContent: '请输入流程文章详情',
+        processName: '请输入流程名称',
+        processLabel: '请输入流程标签'
+        // thumbnailId: '请上传缩略图',
       }
 
     }
   },
   mounted() {
-    this.getAllProductCategory()
-    this.getAllThemeCategory()
+    console.log(this.$route.query)// label name id
   },
   methods: {
-    getAllProductCategory() {
-      GetAllProductCategory().then((res) => {
-        if (res) {
-          this.productCategoryList = res
-        }
-      })
-    },
-    getAllThemeCategory() {
-      GetAllThemeCategory().then((res) => {
-        if (res) {
-          this.themeCategoryList = res
-        }
-      })
-    },
-    currentProductCategoryChange(val) {
-      this.currentProductCategory = val
-      // this.getDocument()
-    },
-    currentThemeCategoryChange(val) {
-      this.currentThemeCategory = val
-      // this.getDocument()
-    },
     beforeUpload(file) {
       console.log('---beforeUpload---', file)
     },
@@ -173,12 +139,13 @@ export default {
     },
     onSubmit() {
       var data = {}
-      data.documentContentContent = encodeURIComponent(this.content) // 资料详情
-      data.documentName = this.name // 资料名称
       data.detailFileId = this.downloadId // 详情文件ID
-      data.thumbnailId = this.thumbnailId // 缩略图ID
-      data.productCategoryId = this.currentProductCategory // 产品分类ID
-      data.themeCategoryId = this.currentThemeCategory // 主题分类ID
+      data.moduleId = this.id // 模块ID
+      data.processContent = this.processContent // 流程内容
+      data.processContentContent = encodeURIComponent(this.content) // 流程内容详情
+      data.processName = this.name // 流程名称
+      data.processLabel = this.processLabel // 流程标签
+      // data.thumbnailId = this.thumbnailId // 缩略图ID
       var url = ''
       for (const key in data) {
         if (!data[key]) {
@@ -190,7 +157,7 @@ export default {
       }
       console.log('---', url)
 
-      CreateDocument(url).then((res) => {
+      CreateProduct(url).then((res) => {
         console.log(res)
       })
     }

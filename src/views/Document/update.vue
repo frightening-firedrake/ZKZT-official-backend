@@ -74,7 +74,7 @@
       <div v-show="showContent" class="ContentWrap" style="width:830px;margin:15px auto;border-top:1px solid rgba(0,0,0,0.3); padding-top:36px;" v-html="content" />
       <div class="btnsWrap">
         <el-button type="primary" @click="onSubmit">保存</el-button>
-        <el-button @click="cancel">取消</el-button>
+        <el-button @click="cancel">返回</el-button>
       </div>
     </div>
   </div>
