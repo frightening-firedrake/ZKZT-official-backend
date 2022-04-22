@@ -192,7 +192,8 @@ export default {
     margin-bottom:15px;
   }
   .ContentWrap{
-    line-height:1.3;
+    line-height:23px;
+    font-size:14px;
   }
     .ContentWrap>>>ol,.ContentWrap>>>ul{
       padding-left:40px;
