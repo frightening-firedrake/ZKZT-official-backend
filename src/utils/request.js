@@ -217,8 +217,21 @@ export function get_query(url, params) {
 */
 export function put_query(url, params) {
   return new Promise((resolve, reject) => {
-    const _url = url + '?' + params.substring(0, params.length - 1)
+    const _url = url + '?' + params
     service.put(_url)
+      .then(res => {
+        resolve(res)
+      })
+      .catch(err => {
+        reject(err)
+      })
+  })
+}
+
+export function post_query(url, params) {
+  return new Promise((resolve, reject) => {
+    const _url = url + '?' + params
+    service.post(_url)
       .then(res => {
         resolve(res)
       })

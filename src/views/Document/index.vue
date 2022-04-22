@@ -18,13 +18,20 @@
         :value="item.id"
       />
     </el-select>
+    <span style="margin-left: 15px">搜索名称：</span>
+
+    <el-input v-model="args.keyword" placeholder="请输入搜索名称" class="input-with-select">
+      <el-button slot="append" icon="el-icon-search" @click="getDocument" />
+    </el-input>
+
     <el-button size="small" icon="el-icon-plus" type="primary" style="float: right;margin-right: 35px" @click="handleCreate">新增</el-button>
     <div class="list">
       <div v-for="item,index in list" :key="index">
         <div class="card">
+          <el-button type="danger" class="delbtn" icon="el-icon-delete" circle @click="handleDelete(item.id)" />
           <div><img :src="FastDFSAccessUrl + item.files[0].url" :alt="item.files[0].name.split('.')[0]" class="image"></div>
           <span class="footer">
-            <span class="title">{{ item.name }}</span>
+            <h6 class="title">{{ item.name }}</h6>
             <span class="btn">
               <el-button size="mini" icon="el-icon-view" @click="handleDetail(item.id)">查看</el-button>
               <el-button size="mini" type="primary" icon="el-icon-edit" @click="handleUpdate(item.id)">编辑</el-button>
@@ -47,7 +54,7 @@
 </template>
 
 <script>
-import { GetDocument, GetAllProductCategory, GetAllThemeCategory } from '@/api/Document'
+import { GetDocument, GetAllProductCategory, GetAllThemeCategory, DeleteDocument } from '@/api/Document'
 import { FastDFSAccessUrl } from '@/utils/global'
 
 export default {
@@ -140,6 +147,16 @@ export default {
       this.$router.push({
         path: '/document/create'
       })
+    },
+    handleDelete(id) {
+      DeleteDocument(id).then((res) => {
+        console.log(res)
+        if (res.status === 200) {
+          this.list = this.list.filter((v) => {
+            return v.id !== id
+          })
+        }
+      })
     }
   }
 }
@@ -154,7 +171,12 @@ export default {
 
   .card {
     margin: 10px 15px;
-
+    position: relative;
+    .delbtn{
+      position:absolute;
+      top:2px;
+      right:2px;
+    }
     .image {
       width: 300px;
       height: 187px;
@@ -181,4 +203,13 @@ export default {
   justify-content: center;
   margin-top: 20px;
 }
+.el-select .el-input {
+    width: 130px;
+  }
+  .input-with-select .el-input-group__prepend {
+    background-color: #fff;
+  }
+  .el-input-group{
+    width: auto;
+  }
 </style>

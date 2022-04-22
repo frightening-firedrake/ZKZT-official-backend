@@ -12,7 +12,11 @@ export default {
   data() {
     return {
       id: this.$route.params.id,
-      row: {}
+      row: {
+        documentContent: {
+          content: ''
+        }
+      }
     }
   },
   mounted() {

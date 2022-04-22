@@ -5,10 +5,11 @@
     </el-button>
     <el-dialog :visible.sync="dialogVisible">
       <el-upload
+        ref="elUpload"
+        :on-progress="onProgress"
         :multiple="true"
         :file-list="fileList"
         :show-file-list="true"
-        :on-remove="handleRemove"
         :on-success="handleSuccess"
         :before-upload="beforeUpload"
         class="editor-slide-upload"
@@ -16,6 +17,8 @@
         list-type="picture-card"
       >
         <div slot="file" slot-scope="{file}">
+          <!-- <el-progress type="circle" :percentage="file.percent" :color="customColors" /> -->
+          <el-progress class="upcard" :show-text="false" :percentage="file.percent" :color="customColors" />
           <img v-if="file.raw.type.indexOf('image')>-1" class="el-upload-list__item-thumbnail" :src="file.url" alt="">
           <video v-if="file.raw.type.indexOf('video')>-1" class="el-upload-list__item-thumbnail" :src="file.url" />
           <p v-if="file.raw.type.indexOf('image')<0&&file.raw.type.indexOf('video')<0" class="el-upload-list__item-thumbnail">
@@ -30,12 +33,12 @@
               <i class="el-icon-zoom-in" />
             </span>
             <!-- <span
-              v-if="!disabled"
-              class="el-upload-list__item-delete"
-              @click="handleDownload(file)"
-            >
-            <i class="el-icon-download" />
-          </span>-->
+                v-if="!disabled"
+                class="el-upload-list__item-delete"
+                @click="handleDownload(file)"
+              >
+              <i class="el-icon-download" />
+              </span>-->
             <!-- v-if="!disabled" -->
             <span
               v-if="file.raw.type.indexOf('image')>-1||file.raw.type.indexOf('video')>-1"
@@ -44,7 +47,8 @@
             >
               <i class="el-icon-delete" />
             </span>
-          </span></div>
+          </span>
+        </div>
         <el-button slot="default" size="small" type="primary">
           点击 上传
         </el-button>
@@ -86,7 +90,14 @@ export default {
       dialogImageUrl: '',
       PreviewType: '',
       dialogVisible2: false,
-      disabled: false
+      disabled: false,
+      customColors: [
+        { color: '#f56c6c', percentage: 25 },
+        { color: '#6f7ad3', percentage: 50 },
+        { color: '#e6a23c', percentage: 75 },
+        { color: '#1989fa', percentage: 99 },
+        { color: '#5cb87a', percentage: 100 }
+      ]
     }
   },
   methods: {
@@ -105,8 +116,8 @@ export default {
       this.fileList = []
       this.dialogVisible = false
     },
-    handleSuccess(response, file) {
-      console.log(response, file)
+    handleSuccess(response, file, fileList) {
+      console.log(response, file, fileList)
       const uid = file.uid
       const type = file.raw.type
       const objKeyArr = Object.keys(this.listObj)
@@ -123,6 +134,11 @@ export default {
       }
     },
     handleRemove(file) {
+      // console.log(file)
+      // console.log(this.fileList)
+      var fileList = this.$refs.elUpload.uploadFiles
+      var index = fileList.findIndex(fileItem => { return fileItem.uid === file.uid })
+      fileList.splice(index, 1)
       const uid = file.uid
       const objKeyArr = Object.keys(this.listObj)
       for (let i = 0, len = objKeyArr.length; i < len; i++) {
@@ -139,6 +155,10 @@ export default {
     },
     handleDownload(file) {
       console.log(file)
+    },
+    onProgress(event, file, fileList) {
+      // console.log(event, file, fileList)
+      file.percent = event.percent
     },
     beforeUpload(file) {
       console.log(file)
@@ -181,4 +201,13 @@ export default {
     width: 100%;
   }
 }
+</style>
+<style lang="css" scoped>
+  .upcard.el-progress{
+    top:auto;
+    bottom:0;
+    width:100%;
+    transform:translate(-50%,-0%);
+  }
+
 </style>

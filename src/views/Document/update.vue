@@ -71,7 +71,7 @@
         active-text="显示预览"
         inactive-text="关闭预览"
       />
-      <div v-show="showContent" style="width:830px;margin:15px auto;border:1px solid rgba(0,0,0,0.3);" v-html="content" />
+      <div v-show="showContent" class="ContentWrap" style="width:830px;margin:15px auto;border-top:1px solid rgba(0,0,0,0.3); padding-top:36px;" v-html="content" />
       <div class="btnsWrap">
         <el-button type="primary" @click="onSubmit">保存</el-button>
         <el-button @click="cancel">取消</el-button>
@@ -100,13 +100,11 @@ export default {
       currentThemeCategory: null,
       name: '',
       oldThumbnailId: '',
-      newThumbnailId: '',
       thumbnailName: '',
       thumbnailUrl: '',
       thumbnailId: null,
 
       oldDetailFileId: '',
-      newDetailFileId: '',
       downloadUrl: '',
       downloadName: '',
       downloadId: null,
@@ -166,11 +164,11 @@ export default {
     },
     currentProductCategoryChange(val) {
       this.currentProductCategory = val
-      this.getDocument()
+      // this.getDocument()
     },
     currentThemeCategoryChange(val) {
       this.currentThemeCategory = val
-      this.getDocument()
+      // this.getDocument()
     },
     beforeUpload(file) {
       console.log('---beforeUpload---', file)
@@ -195,7 +193,7 @@ export default {
     },
     onSubmit() {
       var data = {}
-      data.documentContentContent = this.content // 资料详情
+      data.documentContentContent = encodeURIComponent(this.content) // 资料详情
       data.documentContentId = this.documentContentId // 资料详情ID
       data.documentId = this.id // 资料ID
       data.documentName = this.name // 资料名称
@@ -205,22 +203,26 @@ export default {
       data.oldThumbnailId = this.oldThumbnailId // 修改之前的缩略图ID
       data.productCategoryId = this.currentProductCategory // 产品分类ID
       data.themeCategoryId = this.currentThemeCategory // 主题分类ID
-      UpdateDocument(data).then((res) => {
-        console.log(res)
-        if (res) {
 
-        }
+      var url = ''
+      for (const key in data) {
+        url += key + '=' + data[key] + '&'
+      }
+      console.log('---', url)
+      UpdateDocument(url).then((res) => {
+        console.log(res)
       })
     }
   }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="css" scoped>
 .thumbnail {
   display: flex;
   flex-direction: row;
 
+}
   .image {
     width: 300px;
     height: 187px;
@@ -230,8 +232,10 @@ export default {
     display: flex;
     align-items: flex-end;
   }
-}
   .btnsWrap{
+    position: fixed;
+    right: 10px;
+    top:50px;
     text-align: center;
     margin:15px auto;
   }
@@ -239,4 +243,26 @@ export default {
     margin-top:15px;
     margin-bottom:15px;
   }
+  .ContentWrap{
+    line-height:1.3;
+  }
+    .ContentWrap>>>ol,.ContentWrap>>>ul{
+      padding-left:40px;
+      margin:14px 0;
+    }
+    .ContentWrap>>>p,.ContentWrap>>>h1,.ContentWrap>>>h2,.ContentWrap>>>h3,.ContentWrap>>>h4,.ContentWrap>>>h5,.ContentWrap>>>h6{
+      margin:1em 0;
+    }
+    .ContentWrap>>>a{
+      color:rgb(0, 0, 238);
+      text-decoration: underline;
+      margin:1em 0;
+    }
+    .ContentWrap>>>td, .ContentWrap>>>th {
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 14px;
+    }
+    .ContentWrap>>>img,.ContentWrap>>>video{
+      max-width: 100%;
+    }
 </style>
