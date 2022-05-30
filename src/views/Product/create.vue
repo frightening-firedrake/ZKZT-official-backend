@@ -142,22 +142,23 @@ export default {
       data.detailFileId = this.downloadId // 详情文件ID
       data.moduleId = this.id // 模块ID
       data.processContent = this.processContent // 流程内容
-      data.processContentContent = encodeURIComponent(this.content) // 流程内容详情
+      // data.processContentContent = encodeURIComponent(this.content) // 流程内容详情
+      data.processContentContent = this.content // 流程内容详情
       data.processName = this.name // 流程名称
       data.processLabel = this.processLabel // 流程标签
       // data.thumbnailId = this.thumbnailId // 缩略图ID
-      var url = ''
-      for (const key in data) {
-        if (!data[key]) {
-          this.$message.error(this.errorMsg[key])
-          return
-        } else {
-          url += key + '=' + data[key] + '&'
-        }
-      }
-      console.log('---', url)
+      // var url = ''
+      // for (const key in data) {
+      //   if (!data[key]) {
+      //     this.$message.error(this.errorMsg[key])
+      //     return
+      //   } else {
+      //     url += key + '=' + data[key] + '&'
+      //   }
+      // }
+      // console.log('---', url)
 
-      CreateProduct(url).then((res) => {
+      CreateProduct(data).then((res) => {
         console.log(res)
       })
     }

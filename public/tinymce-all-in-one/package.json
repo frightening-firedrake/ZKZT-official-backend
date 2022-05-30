@@ -1,0 +1,36 @@
+{
+  "_from": "tinymce-all-in-one@4.9.3",
+  "_id": "tinymce-all-in-one@4.9.3",
+  "_inBundle": false,
+  "_integrity": "sha512-S/b/dAr00lkKHaJ07wnWf8a2uduCszgeSDzvYxvBWahpTx+p+jXO91DY+Ixmv813si1pyCsBSpaC4qZKz/s2Cg==",
+  "_location": "/tinymce-all-in-one",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "tinymce-all-in-one@4.9.3",
+    "name": "tinymce-all-in-one",
+    "escapedName": "tinymce-all-in-one",
+    "rawSpec": "4.9.3",
+    "saveSpec": null,
+    "fetchSpec": "4.9.3"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/tinymce-all-in-one/-/tinymce-all-in-one-4.9.3.tgz",
+  "_shasum": "ae5fb1d73d4a42de35ff00ca8e2a3ba1b43683c3",
+  "_spec": "tinymce-all-in-one@4.9.3",
+  "_where": "G:\\zl20220311\\工具包",
+  "author": {
+    "name": "Pan",
+    "email": "panfree23@gmail.com"
+  },
+  "bundleDependencies": false,
+  "deprecated": false,
+  "description": "Build all tinymce plugins into one js",
+  "license": "MIT",
+  "name": "tinymce-all-in-one",
+  "version": "4.9.3"
+}

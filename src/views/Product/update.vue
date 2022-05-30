@@ -186,25 +186,26 @@ export default {
       data.oldDetailFileId = this.oldDetailFileId
       data.oldModuleId = this.id// 模块ID
       data.processContent = this.processContent // 流程内容
-      data.processContentContent = encodeURIComponent(this.content) // 流程内容详情
+      // data.processContentContent = encodeURIComponent(this.content) // 流程内容详情
+      data.processContentContent = this.content // 流程内容详情
       data.processContentId = this.processContentId
       data.processId = this.processId
       data.processLabel = this.processLabel // 流程标签
       data.processName = this.name // 流程名称
 
       // data.thumbnailId = this.thumbnailId // 缩略图ID
-      var url = ''
-      for (const key in data) {
-        if (!data[key]) {
-          this.$message.error(this.errorMsg[key])
-          return
-        } else {
-          url += key + '=' + data[key] + '&'
-        }
-      }
-      console.log('---', url)
+      // var url = ''
+      // for (const key in data) {
+      //   if (!data[key]) {
+      //     this.$message.error(this.errorMsg[key])
+      //     return
+      //   } else {
+      //     url += key + '=' + data[key] + '&'
+      //   }
+      // }
+      // console.log('---', url)
 
-      UpdateProduct(url).then((res) => {
+      UpdateProduct(data).then((res) => {
         console.log(res)
       })
     }

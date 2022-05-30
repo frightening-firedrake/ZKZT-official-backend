@@ -193,7 +193,8 @@ export default {
     },
     onSubmit() {
       var data = {}
-      data.documentContentContent = encodeURIComponent(this.content) // 资料详情
+      // data.documentContentContent = encodeURIComponent(this.content) // 资料详情
+      data.documentContentContent = this.content // 资料详情
       data.documentContentId = this.documentContentId // 资料详情ID
       data.documentId = this.id // 资料ID
       data.documentName = this.name // 资料名称
@@ -204,12 +205,12 @@ export default {
       data.productCategoryId = this.currentProductCategory // 产品分类ID
       data.themeCategoryId = this.currentThemeCategory // 主题分类ID
 
-      var url = ''
-      for (const key in data) {
-        url += key + '=' + data[key] + '&'
-      }
-      console.log('---', url)
-      UpdateDocument(url).then((res) => {
+      // var url = ''
+      // for (const key in data) {
+      //   url += key + '=' + data[key] + '&'
+      // }
+      // console.log('---', url)
+      UpdateDocument(data).then((res) => {
         console.log(res)
       })
     }

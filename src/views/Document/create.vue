@@ -173,24 +173,25 @@ export default {
     },
     onSubmit() {
       var data = {}
-      data.documentContentContent = encodeURIComponent(this.content) // 资料详情
+      // data.documentContentContent = encodeURIComponent(this.content) // 资料详情
+      data.documentContentContent = this.content // 资料详情
       data.documentName = this.name // 资料名称
       data.detailFileId = this.downloadId // 详情文件ID
       data.thumbnailId = this.thumbnailId // 缩略图ID
       data.productCategoryId = this.currentProductCategory // 产品分类ID
       data.themeCategoryId = this.currentThemeCategory // 主题分类ID
-      var url = ''
+      // var url = ''
       for (const key in data) {
         if (!data[key]) {
           this.$message.error(this.errorMsg[key])
           return
-        } else {
-          url += key + '=' + data[key] + '&'
+        // } else {
+        //   url += key + '=' + data[key] + '&'
         }
       }
-      console.log('---', url)
+      // console.log('---', url)
 
-      CreateDocument(url).then((res) => {
+      CreateDocument(data).then((res) => {
         console.log(res)
       })
     }

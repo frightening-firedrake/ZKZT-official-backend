@@ -180,6 +180,7 @@ export default {
     .image {
       width: 300px;
       height: 187px;
+      display: block;
     }
 
     .footer {
