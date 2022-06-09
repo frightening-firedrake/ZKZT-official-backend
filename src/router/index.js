@@ -10,6 +10,7 @@ import Layout from '@/layout'
 // import nestedRouter from './modules/nested'
 import documentRouter from './modules/document'
 import productRouter from './modules/product'
+import telephoneRouter from './modules/telephone'
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html
@@ -72,7 +73,8 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   // nestedRouter,
   documentRouter,
-  productRouter
+  productRouter,
+  telephoneRouter
 ]
 
 const createRouter = () => new Router({
